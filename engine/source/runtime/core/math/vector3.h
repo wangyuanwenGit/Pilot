@@ -6,7 +6,7 @@
 
 #include <cassert>
 
-namespace Pilot
+namespace Piccolo
 {
     REFLECTION_TYPE(Vector3)
     CLASS(Vector3, Fields)
@@ -19,7 +19,7 @@ namespace Pilot
         float z {0.f};
 
     public:
-        Vector3() {}
+        Vector3() = default;
         Vector3(float x_, float y_, float z_) : x {x_}, y {y_}, z {z_} {}
 
         explicit Vector3(const float coords[3]) : x {coords[0]}, y {coords[1]}, z {coords[2]} {}
@@ -176,7 +176,7 @@ namespace Pilot
         instead.
         */
 
-        float length() const { return sqrt(x * x + y * y + z * z); }
+        float length() const { return std::hypot(x, y, z); }
 
         /** Returns the square of the length(magnitude) of the vector.
         @remarks
@@ -242,7 +242,7 @@ namespace Pilot
 
         void normalise()
         {
-            float length = sqrt(x * x + y * y + z * z);
+            float length = std::hypot(x, y, z);
             if (length == 0.f)
                 return;
 
@@ -450,4 +450,4 @@ namespace Pilot
         static const Vector3 NEGATIVE_UNIT_Z;
         static const Vector3 UNIT_SCALE;
     };
-} // namespace Pilot
+} // namespace Piccolo

@@ -22,7 +22,11 @@ if (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${GENERATED_SHADER_FOLDER})
   file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${GENERATED_SHADER_FOLDER})
 endif()
 
-include(${PILOT_ROOT_DIR}/cmake/ShaderCompile.cmake)
+if (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${GENERATED_SHADER_FOLDER}/spv)
+  file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${GENERATED_SHADER_FOLDER}/spv)
+endif()
+
+include(${PICCOLO_ROOT_DIR}/cmake/ShaderCompile.cmake)
 
 compile_shader(
   "${SHADER_FILES}"
@@ -56,7 +60,7 @@ set_target_properties("${TARGET_NAME}" PROPERTIES FOLDER "Engine" )
 
 #     set_target_properties(${HEADER_NAME} PROPERTIES FOLDER "Shaders/generated" )
 #     # Add the custom target like a dependencies of the project
-#     add_dependencies(${PILOT_NAME} ${HEADER_NAME})
+#     add_dependencies(${PICCOLO_NAME} ${HEADER_NAME})
 
 #     message(STATUS "Generating build commands for ${SHADER}")
 # endforeach()

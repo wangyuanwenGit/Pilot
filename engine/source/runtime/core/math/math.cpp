@@ -1,7 +1,7 @@
 #include "runtime/core/math/math.h"
 #include "runtime/core/math/matrix4.h"
 
-namespace Pilot
+namespace Piccolo
 {
     Math::AngleUnit Math::k_AngleUnit;
 
@@ -9,15 +9,8 @@ namespace Pilot
 
     bool Math::realEqual(float a, float b, float tolerance /* = std::numeric_limits<float>::epsilon() */)
     {
-        if (fabs(b - a) <= tolerance)
-            return true;
-        else
-            return false;
+        return std::fabs(b - a) <= tolerance;
     }
-
-    float Math::clamp(float v, float min, float max) { return (v < min) ? min : ((v > max) ? max : v); }
-
-    float Math::getMaxElement(float x, float y, float z) { return std::max(std::max(x, y), z); }
 
     float Math::degreesToRadians(float degrees) { return degrees * Math_fDeg2Rad; }
 
@@ -27,32 +20,32 @@ namespace Pilot
     {
         if (k_AngleUnit == AngleUnit::AU_DEGREE)
             return angleunits * Math_fDeg2Rad;
-        else
-            return angleunits;
+
+        return angleunits;
     }
 
     float Math::radiansToAngleUnits(float radians)
     {
         if (k_AngleUnit == AngleUnit::AU_DEGREE)
             return radians * Math_fRad2Deg;
-        else
-            return radians;
+
+        return radians;
     }
 
     float Math::angleUnitsToDegrees(float angleunits)
     {
         if (k_AngleUnit == AngleUnit::AU_RADIAN)
             return angleunits * Math_fRad2Deg;
-        else
-            return angleunits;
+
+        return angleunits;
     }
 
     float Math::degreesToAngleUnits(float degrees)
     {
         if (k_AngleUnit == AngleUnit::AU_RADIAN)
             return degrees * Math_fDeg2Rad;
-        else
-            return degrees;
+
+        return degrees;
     }
 
     Radian Math::acos(float value)
@@ -60,14 +53,12 @@ namespace Pilot
         if (-1.0 < value)
         {
             if (value < 1.0)
-                return Radian(acos(value));
-            else
-                return Radian(0.0);
+                return Radian(::acos(value));
+
+            return Radian(0.0);
         }
-        else
-        {
-            return Radian(Math_PI);
-        }
+
+        return Radian(Math_PI);
     }
     //-----------------------------------------------------------------------
     Radian Math::asin(float value)
@@ -75,14 +66,12 @@ namespace Pilot
         if (-1.0 < value)
         {
             if (value < 1.0)
-                return Radian(asin(value));
-            else
-                return Radian(Math_HALF_PI);
+                return Radian(::asin(value));
+
+            return Radian(Math_HALF_PI);
         }
-        else
-        {
-            return Radian(-Math_HALF_PI);
-        }
+
+        return Radian(-Math_HALF_PI);
     }
 
     Matrix4x4
@@ -174,7 +163,7 @@ namespace Pilot
         float C  = -(right + left) * inv_width;
         float D  = -(top + bottom) * inv_height;
         float q  = -2 * inv_distance;
-        float qn = qn = -(zfar + znear) * inv_distance;
+        float qn = -(zfar + znear) * inv_distance;
 
         // NB: This creates 'uniform' orthographic projection matrix,
         // which depth range [-1,1], right-handed rules
@@ -203,4 +192,45 @@ namespace Pilot
         return proj_matrix;
     }
 
-} // namespace Pilot
+    Matrix4x4
+    Math::makeOrthographicProjectionMatrix01(float left, float right, float bottom, float top, float znear, float zfar)
+    {
+        float inv_width    = 1.0f / (right - left);
+        float inv_height   = 1.0f / (top - bottom);
+        float inv_distance = 1.0f / (zfar - znear);
+
+        float A  = 2 * inv_width;
+        float B  = 2 * inv_height;
+        float C  = -(right + left) * inv_width;
+        float D  = -(top + bottom) * inv_height;
+        float q  = -1 * inv_distance;
+        float qn = -znear * inv_distance;
+
+        // NB: This creates 'uniform' orthographic projection matrix,
+        // which depth range [-1,1], right-handed rules
+        //
+        // [ A   0   0   C  ]
+        // [ 0   B   0   D  ]
+        // [ 0   0   q   qn ]
+        // [ 0   0   0   1  ]
+        //
+        // A = 2 * / (right - left)
+        // B = 2 * / (top - bottom)
+        // C = - (right + left) / (right - left)
+        // D = - (top + bottom) / (top - bottom)
+        // q = - 1 / (far - near)
+        // qn = - near / (far - near)
+
+        Matrix4x4 proj_matrix = Matrix4x4::ZERO;
+        proj_matrix[0][0]     = A;
+        proj_matrix[0][3]     = C;
+        proj_matrix[1][1]     = B;
+        proj_matrix[1][3]     = D;
+        proj_matrix[2][2]     = q;
+        proj_matrix[2][3]     = qn;
+        proj_matrix[3][3]     = 1;
+
+        return proj_matrix;
+    }
+
+} // namespace Piccolo

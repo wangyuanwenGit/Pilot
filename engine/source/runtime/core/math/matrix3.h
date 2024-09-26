@@ -4,6 +4,8 @@
 #include "runtime/core/math/quaternion.h"
 #include "runtime/core/math/vector3.h"
 
+#include <cstring>
+
 // NB All code adapted from Wild Magic 0.2 Matrix math (free source code)
 // http://www.geometrictools.com/
 
@@ -22,7 +24,7 @@
 //           0       0       1
 // where t > 0 indicates a counterclockwise rotation in the xy-plane.
 
-namespace Pilot
+namespace Piccolo
 {
     /** A 3x3 matrix which can represent rotations around axes.
     @note
@@ -363,4 +365,4 @@ namespace Pilot
         static const Matrix3x3 ZERO;
         static const Matrix3x3 IDENTITY;
     };
-} // namespace Pilot
+} // namespace Piccolo

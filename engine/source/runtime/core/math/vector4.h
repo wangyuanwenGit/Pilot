@@ -4,7 +4,7 @@
 #include "runtime/core/math/vector3.h"
 #include "runtime/core/meta/reflection/reflection.h"
 
-namespace Pilot
+namespace Piccolo
 {
     REFLECTION_TYPE(Vector4)
     CLASS(Vector4, Fields)
@@ -15,7 +15,7 @@ namespace Pilot
         float x {0.f}, y {0.f}, z {0.f}, w {0.f};
 
     public:
-        Vector4() {}
+        Vector4() = default;
         Vector4(float x_, float y_, float z_, float w_) : x {x_}, y {y_}, z {z_}, w {w_} {}
         Vector4(const Vector3& v3, float w_) : x {v3.x}, y {v3.y}, z {v3.z}, w {w_} {}
 
@@ -194,4 +194,4 @@ namespace Pilot
         static const Vector4 UNIT_SCALE;
     };
 
-} // namespace Pilot
+} // namespace Piccolo

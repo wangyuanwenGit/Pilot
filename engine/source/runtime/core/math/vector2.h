@@ -6,7 +6,7 @@
 #include <cassert>
 #include <cmath>
 
-namespace Pilot
+namespace Piccolo
 {
     REFLECTION_TYPE(Vector2)
     CLASS(Vector2, Fields)
@@ -17,7 +17,7 @@ namespace Pilot
         float x {0.f}, y {0.f};
 
     public:
-        Vector2() {}
+        Vector2() = default;
 
         Vector2(float x_, float y_) : x(x_), y(y_) {}
 
@@ -30,6 +30,18 @@ namespace Pilot
         float* ptr() { return &x; }
 
         const float* ptr() const { return &x; }
+
+        float operator[](size_t i) const
+        {
+            assert(i < 2);
+            return (i == 0 ? x : y);
+        }
+
+        float& operator[](size_t i)
+        {
+            assert(i < 2);
+            return (i == 0 ? x : y);
+        }
 
         bool operator==(const Vector2& rhs) const { return (x == rhs.x && y == rhs.y); }
 
@@ -150,7 +162,7 @@ namespace Pilot
         length (e.g. for just comparing lengths) use squaredLength()
         instead.
         */
-        float length() const { return sqrt(x * x + y * y); }
+        float length() const { return std::hypot(x, y); }
 
         /** Returns the square of the length(magnitude) of the vector.
         @remarks
@@ -213,7 +225,7 @@ namespace Pilot
 
         float normalise()
         {
-            float lengh = sqrt(x * x + y * y);
+            float lengh = std::hypot(x, y);
 
             if (lengh > 0.0f)
             {
@@ -236,25 +248,15 @@ namespace Pilot
         */
         Vector2 midPoint(const Vector2& vec) const { return Vector2((x + vec.x) * 0.5f, (y + vec.y) * 0.5f); }
 
-        /** Returnsk_true if the vector's scalar components are all greater
+        /** Returns true if the vector's scalar components are all greater
         that the ones of the vector it is compared against.
         */
-        bool operator<(const Vector2& rhs) const
-        {
-            if (x < rhs.x && y < rhs.y)
-                return true;
-            return false;
-        }
+        bool operator<(const Vector2& rhs) const { return x < rhs.x && y < rhs.y; }
 
-        /** Returnsk_true if the vector's scalar components are all smaller
+        /** Returns true if the vector's scalar components are all smaller
         that the ones of the vector it is compared against.
         */
-        bool operator>(const Vector2& rhs) const
-        {
-            if (x > rhs.x && y > rhs.y)
-                return true;
-            return false;
-        }
+        bool operator>(const Vector2& rhs) const { return x > rhs.x && y > rhs.y; }
 
         /** Sets this vector's components to the minimum of its own and the
         ones of the passed in vector.
@@ -301,7 +303,7 @@ namespace Pilot
 
         float crossProduct(const Vector2& rhs) const { return x * rhs.y - y * rhs.x; }
 
-        /** Returnsk_true if this vector is zero length. */
+        /** Returns true if this vector is zero length. */
         bool isZeroLength(void) const
         {
             float sqlen = (x * x) + (y * y);
@@ -339,4 +341,4 @@ namespace Pilot
         static const Vector2 UNIT_SCALE;
     };
 
-} // namespace Pilot
+} // namespace Piccolo

@@ -6,8 +6,10 @@
 
 #include "runtime/function/framework/component/component.h"
 
-namespace Pilot
+namespace Piccolo
 {
+    class RenderCamera;
+
     enum class CameraMode : unsigned char
     {
         third_person,
@@ -20,27 +22,33 @@ namespace Pilot
     CLASS(CameraComponent : public Component, WhiteListFields)
     {
         REFLECTION_BODY(CameraComponent)
-    protected:
-        CameraComponentRes m_camera_param;
-
-        CameraMode m_camera_mode {CameraMode::invalid};
-        META(Enable)
-        Vector3 m_foward {Vector3::NEGATIVE_UNIT_Y};
-        META(Enable)
-        Vector3 m_up {Vector3::UNIT_Z};
-        META(Enable)
-        Vector3 m_left {Vector3::UNIT_X};
 
     public:
-        CameraComponent() {}
-        CameraComponent(const CameraComponentRes& camera_param, GObject* parent_object);
+        CameraComponent() = default;
+
+        void postLoadResource(std::weak_ptr<GObject> parent_object) override;
 
         void tick(float delta_time) override;
-        void destroy() override {}
+
+        CameraMode getCameraMode() const { return m_camera_mode; }
+        void setCameraMode(CameraMode mode) { m_camera_mode = mode; }
+        Vector3 getPosition() const { return m_position; }
+        Vector3 getForward() const { return m_forward; }
 
     private:
         void tickFirstPersonCamera(float delta_time);
         void tickThirdPersonCamera(float delta_time);
-        void tickFreeCamera();
+        void tickFreeCamera(float delta_time);
+
+        META(Enable)
+        CameraComponentRes m_camera_res;
+
+        CameraMode m_camera_mode {CameraMode::invalid};
+
+        Vector3 m_position;
+
+        Vector3 m_forward {Vector3::NEGATIVE_UNIT_Y};
+        Vector3 m_up {Vector3::UNIT_Z};
+        Vector3 m_left {Vector3::UNIT_X};
     };
-} // namespace Pilot
+} // namespace Piccolo
